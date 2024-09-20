@@ -17,11 +17,11 @@ public class GridManager : MonoBehaviour
     // Fill the grid with random gems
     private void FillGrid()
     {
-        for (int x = 0; x < width; x++)
+        for (int y = 0; y < width; y++)
         {
-            for (int y = 0; y < height; y++)
+            for (int x = 0; x < height; x++)
             {
-                Vector2 position = new Vector2(x, y);
+                Vector2 position = new Vector2(x, -y);
                 int gemIndex = Random.Range(0, gemPrefabs.Length);
                 GameObject newGem = Instantiate(gemPrefabs[gemIndex], position, Quaternion.identity);
                 gridArray[x, y] = newGem;
@@ -49,9 +49,9 @@ public class GridManager : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
 
         // Logic to check for 3 or more in a row
-        for (int x = 0; x < width; x++)
+        for (int y = 0; y < width; y++)
         {
-            for (int y = 0; y < height; y++)
+            for (int x = 0; x < height; x++)
             {
                 GameObject gem = gridArray[x, y];
                 // Check if there are matching gems (horizontal or vertical)
