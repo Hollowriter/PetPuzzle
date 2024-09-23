@@ -246,10 +246,8 @@ MonoBehaviour:
   width: 8
   height: 8
   gemPrefabs:
-  - {fileID: 2386633437564998068, guid: 6bebf92dd91ec8c4491ca1958b93d2a6, type: 3}
-  - {fileID: 8066419873658975161, guid: 69537a5054010d44b99e9f36a8409782, type: 3}
-  - {fileID: 7999405978909345856, guid: e1660fd450f831049a2403f55f3875d1, type: 3}
-  - {fileID: 3620787178490542626, guid: 1e2e865fffed9d24d89b193101b9d509, type: 3}
+  - Type: 0
+    prefab: {fileID: 2386633437564998068, guid: 6bebf92dd91ec8c4491ca1958b93d2a6, type: 3}
 --- !u!4 &1368802455
 Transform:
   m_ObjectHideFlags: 0

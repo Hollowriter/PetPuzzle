@@ -3,47 +3,81 @@ using UnityEngine;
 
 public class Gem : MonoBehaviour
 {
-    private Vector2 firstTouchPosition;
-    private Vector2 finalTouchPosition;
+    private int x;
+    private int y;
+    private GridManager.PieceType pieceType;
     private GridManager gridManager;
-    private Vector2 gemPosition;
+    private MoveGem moveGem;
+    private ColorGem colorGem;
+
+    public int GetX() 
+    {
+        return x;
+    }
+
+    public int GetY() 
+    {
+        return y;
+    }
+
+    public void SetX(int _x)
+    {
+        if (IsMovable())
+            x = _x;
+    }
+
+    public void SetY(int _y) 
+    {
+        if (IsMovable())
+            y = _y;
+    }
+
+    public MoveGem MoveGem 
+    {
+        get { return moveGem; }
+    }
+
+    public ColorGem ColorGem 
+    {
+        get { return colorGem; }
+    }
+
+    public GridManager.PieceType GetPieceType() 
+    {
+        return pieceType;
+    }
+
+    public GridManager GetGridManager() 
+    {
+        return gridManager;
+    }
+
+    public void Create(int _x, int _y, GridManager.PieceType _pieceType) 
+    {
+        x = _x;
+        y = _y;
+        pieceType = _pieceType;
+    }
+
+    private void Awake()
+    {
+        moveGem = GetComponent<MoveGem>();
+        colorGem = GetComponent<ColorGem>();
+        gridManager = FindObjectOfType<GridManager>();
+    }
 
     private void Start()
     {
         gridManager = FindObjectOfType<GridManager>();
-        gemPosition = transform.position;
     }
 
-    private void OnMouseDown()
+    public bool IsMovable() 
     {
-        firstTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        return moveGem != null;
     }
 
-    private void OnMouseUp()
+    public bool IsColored() 
     {
-        finalTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        DetectSwipe();
-    }
-
-    private void DetectSwipe()
-    {
-        float swipeAngle = Mathf.Atan2(finalTouchPosition.y - firstTouchPosition.y, finalTouchPosition.x - firstTouchPosition.x) * 180 / Mathf.PI;
-
-        if (swipeAngle > -45 && swipeAngle <= 45 && gemPosition.x < gridManager.GetWidth() - 1) // Swipe Right
-        {
-            gridManager.SwapGems(gemPosition, new Vector2(gemPosition.x + 1, gemPosition.y));
-        }
-        else if (swipeAngle > 45 && swipeAngle <= 135 && gemPosition.y < gridManager.GetHeight() - 1) // Swipe Up
-        {
-            gridManager.SwapGems(gemPosition, new Vector2(gemPosition.x, gemPosition.y + 1));
-        }
-        else if ((swipeAngle > 135 || swipeAngle <= -135) && gemPosition.x > 0) // Swipe Left
-        {
-            gridManager.SwapGems(gemPosition, new Vector2(gemPosition.x - 1, gemPosition.y));
-        }
-        else if (swipeAngle < -45 && swipeAngle >= -135 && gemPosition.y > 0) // Swipe Down
-        {
-            gridManager.SwapGems(gemPosition, new Vector2(gemPosition.x, gemPosition.y - 1));
-        }
+        return colorGem != null;
     }
 }

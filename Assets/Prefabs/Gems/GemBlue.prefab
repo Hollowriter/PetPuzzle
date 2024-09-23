@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 7658832295639201940}
   - component: {fileID: 6784860471760989414}
   - component: {fileID: -2746779862028896166}
+  - component: {fileID: 5791322575098712897}
+  - component: {fileID: 8823665152250600466}
   m_Layer: 0
   m_Name: GemBlue
   m_TagString: GemBlue
@@ -28,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -97,3 +99,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc6cafa962125534c97a1b010d544a24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5791322575098712897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2386633437564998068}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b5ecb150b9ffba49b3eb433826effcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8823665152250600466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2386633437564998068}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6df5df42564f5cc449c39399bf4f8930, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colorSprites:
+  - color: 0
+    sprite: {fileID: 21300000, guid: d030d13878911cc4ea52c1916e7868bf, type: 3}
+  - color: 1
+    sprite: {fileID: 21300000, guid: 7f680ae8226348f478d89524e8a42132, type: 3}
+  - color: 2
+    sprite: {fileID: 21300000, guid: 443cfbdf33ac23a43aa28012c24a3223, type: 3}
+  - color: 3
+    sprite: {fileID: 21300000, guid: 857a60baa41af704b89204ec47fd5d72, type: 3}

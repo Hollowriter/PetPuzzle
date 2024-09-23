@@ -1,36 +1,64 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GridManager : MonoBehaviour
 {
+    public enum PieceType 
+    {
+        NORMAL,
+        COUNT
+    }
+    [System.Serializable]
+    public struct PiecePrefab 
+    {
+        public PieceType Type;
+        public GameObject prefab;
+    }
     [SerializeField] private int width = 8;
     [SerializeField] private int height = 8;
-    [SerializeField] private GameObject[] gemPrefabs;  // Different gem types
-    [SerializeField] private GameObject[,] gridArray;
+    [SerializeField] private PiecePrefab[] gemPrefabs;  // Different gem types
+    [SerializeField] private Gem[,] gridArray;
+    private Dictionary<PieceType, GameObject> piecePrefabDictionary;
 
     private void Start()
     {
-        gridArray = new GameObject[width, height];
+        gridArray = new Gem[width, height];
+        piecePrefabDictionary = new Dictionary<PieceType, GameObject>();
+        for (int i = 0; i < gemPrefabs.Length; i++) 
+        {
+            if (!piecePrefabDictionary.ContainsKey(gemPrefabs[i].Type)) 
+            {
+                piecePrefabDictionary.Add(gemPrefabs[i].Type, gemPrefabs[i].prefab);
+            }
+        }
         FillGrid();
     }
 
     // Fill the grid with random gems
     private void FillGrid()
     {
-        for (int y = 0; y < width; y++)
+        for (int x = 0; x < width; x++)
         {
-            for (int x = 0; x < height; x++)
+            for (int y = 0; y < height; y++)
             {
-                Vector2 position = new Vector2(x, -y);
-                int gemIndex = Random.Range(0, gemPrefabs.Length);
-                GameObject newGem = Instantiate(gemPrefabs[gemIndex], position, Quaternion.identity);
-                gridArray[x, y] = newGem;
+                Vector2 position = new Vector2(x, y);
+                /*int gemIndex = Random.Range(0, gemPrefabs.Length);*/
+                GameObject newGem = (GameObject)Instantiate(piecePrefabDictionary[PieceType.NORMAL], Vector3.zero, Quaternion.identity);
+                newGem.transform.parent = transform;
+                gridArray[x, y] = newGem.GetComponent<Gem>();
+                gridArray[x, y].Create(x, y, PieceType.NORMAL);
+                gridArray[x, y].MoveGem.Move(x, y);
+                if (gridArray[x, y].IsColored()) 
+                {
+                    gridArray[x, y].ColorGem.SetColor((ColorGem.ColorType)Random.Range(0, gridArray[x, y].ColorGem.NumColors));
+                }
             }
         }
     }
 
     // Swap two gems in the grid
-    public void SwapGems(Vector2 firstPos, Vector2 secondPos)
+    /*public void SwapGems(Vector2 firstPos, Vector2 secondPos)
     {
         GameObject temp = gridArray[(int)firstPos.x, (int)firstPos.y];
         gridArray[(int)firstPos.x, (int)firstPos.y] = gridArray[(int)secondPos.x, (int)secondPos.y];
@@ -41,10 +69,10 @@ public class GridManager : MonoBehaviour
         gridArray[(int)secondPos.x, (int)secondPos.y].transform.position = secondPos;
 
         StartCoroutine(CheckMatches());
-    }
+    }*/
 
     // Check if there are any matches on the grid
-    private IEnumerator CheckMatches()
+    /*private IEnumerator CheckMatches()
     {
         yield return new WaitForSeconds(0.2f);
 
@@ -66,7 +94,7 @@ public class GridManager : MonoBehaviour
         // After destroying matches, refill the grid
         yield return new WaitForSeconds(0.2f);
         RefillGrid();
-    }
+    }*/
 
     private bool CheckForMatch(int x, int y)
     {
@@ -102,9 +130,9 @@ public class GridManager : MonoBehaviour
                 if (gridArray[x, y] == null)
                 {
                     Vector2 position = new Vector2(x, y);
-                    int gemIndex = Random.Range(0, gemPrefabs.Length);
+                    /*int gemIndex = Random.Range(0, gemPrefabs.Length);
                     GameObject newGem = Instantiate(gemPrefabs[gemIndex], position, Quaternion.identity);
-                    gridArray[x, y] = newGem;
+                    gridArray[x, y] = newGem;*/
                 }
             }
         }
@@ -118,5 +146,10 @@ public class GridManager : MonoBehaviour
     public int GetHeight() 
     { 
         return height; 
+    }
+
+    public Vector2 GetWorldPosition(int x, int y) 
+    {
+        return new Vector2(transform.position.x - width / 2.0f + x, transform.position.y + height / 2.0f - y);
     }
 }
