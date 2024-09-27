@@ -18,6 +18,7 @@ public class GridManager : MonoBehaviour
     }
     [SerializeField] private int width = 8;
     [SerializeField] private int height = 8;
+    [SerializeField] private float fillTime;
     [SerializeField] private PiecePrefab[] gemPrefabs;  // Different gem types
     [SerializeField] private Gem[,] gridArray;
     private Dictionary<PieceType, GameObject> piecePrefabDictionary;
@@ -34,26 +35,70 @@ public class GridManager : MonoBehaviour
             }
         }
         FillGrid();
+        StartCoroutine(FillWithGems());
     }
 
-    // Fill the grid with random gems
+    public IEnumerator FillWithGems() 
+    {
+        while (FillStep()) 
+        {
+            yield return new WaitForSeconds(fillTime);
+        }
+    }
+
+    public bool FillStep()
+    {
+        bool movedPiece = false;
+
+        for (int y = height-2; y >= 0; y--) 
+        {
+            for (int x = 0; x < width; x++) 
+            {
+                Gem gem = gridArray[x, y];
+
+                if (gem.IsMovable()) 
+                {
+                    Gem gemBelow = gridArray[x, y + 1];
+                    if (gemBelow.GetPieceType() == PieceType.EMPTY) 
+                    {
+                        Destroy(gemBelow.gameObject);
+                        gem.MoveGem.Move(x, y + 1, fillTime);
+                        gridArray[x, y + 1] = gem;
+                        SpawnNewGem(x, y, PieceType.EMPTY);
+                        movedPiece = true;
+                    }
+                }
+            }
+        }
+
+        for (int x = 0; x < width; x++) 
+        {
+            Gem gemBelow = gridArray[x, 0];
+
+            if (gemBelow.GetPieceType() == PieceType.EMPTY) 
+            {
+                Destroy(gemBelow.gameObject);
+                GameObject newGem = (GameObject)Instantiate(piecePrefabDictionary[PieceType.NORMAL], GetWorldPosition(x, -1), Quaternion.identity);
+                newGem.transform.parent = transform;
+
+                gridArray[x, 0] = newGem.GetComponent<Gem>();
+                gridArray[x, 0].Create(x, -1, PieceType.NORMAL);
+                gridArray[x, 0].MoveGem.Move(x, 0, fillTime);
+                gridArray[x, 0].ColorGem.SetColor((ColorGem.ColorType)Random.Range(0, gridArray[x, 0].ColorGem.NumColors));
+                movedPiece = true;
+            }
+        }
+
+        return movedPiece;
+    }
+
     private void FillGrid()
     {
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                Vector2 position = new Vector2(x, y);
-                /*int gemIndex = Random.Range(0, gemPrefabs.Length);*/
-                GameObject newGem = (GameObject)Instantiate(piecePrefabDictionary[PieceType.NORMAL], Vector3.zero, Quaternion.identity);
-                newGem.transform.parent = transform;
-                gridArray[x, y] = newGem.GetComponent<Gem>();
-                gridArray[x, y].Create(x, y, PieceType.NORMAL);
-                gridArray[x, y].MoveGem.Move(x, y);
-                if (gridArray[x, y].IsColored()) 
-                {
-                    gridArray[x, y].ColorGem.SetColor((ColorGem.ColorType)Random.Range(0, gridArray[x, y].ColorGem.NumColors));
-                }
+                SpawnNewGem(x, y, PieceType.EMPTY);
             }
         }
     }

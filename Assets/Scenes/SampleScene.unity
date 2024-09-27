@@ -245,6 +245,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 8
   height: 8
+  fillTime: 0.2
   gemPrefabs:
   - Type: 0
     prefab: {fileID: 6299742341589749064, guid: 58c28003ed89f224588dc8c05640caf6, type: 3}
