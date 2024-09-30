@@ -8,6 +8,7 @@ public class GridManager : MonoBehaviour
     {
         EMPTY,
         NORMAL,
+        UNMOVABLE,
         COUNT
     }
     [System.Serializable]
@@ -22,6 +23,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private PiecePrefab[] gemPrefabs;  // Different gem types
     [SerializeField] private Gem[,] gridArray;
     private Dictionary<PieceType, GameObject> piecePrefabDictionary;
+    private bool inverse = false;
 
     private void Start()
     {
@@ -42,6 +44,7 @@ public class GridManager : MonoBehaviour
     {
         while (FillStep()) 
         {
+            inverse = !inverse;
             yield return new WaitForSeconds(fillTime);
         }
     }
@@ -52,8 +55,13 @@ public class GridManager : MonoBehaviour
 
         for (int y = height-2; y >= 0; y--) 
         {
-            for (int x = 0; x < width; x++) 
+            for (int loopX = 0; loopX < width; loopX++) 
             {
+                int x = loopX;
+                if (inverse) 
+                {
+                    x = width - 1 - loopX;
+                }
                 Gem gem = gridArray[x, y];
 
                 if (gem.IsMovable()) 
@@ -66,6 +74,50 @@ public class GridManager : MonoBehaviour
                         gridArray[x, y + 1] = gem;
                         SpawnNewGem(x, y, PieceType.EMPTY);
                         movedPiece = true;
+                    }
+                    else
+                    {
+                        for (int diag = -1; diag <= 1; diag++) 
+                        {
+                            if (diag != 0) 
+                            {
+                                int diagX = x + diag;
+                                if (inverse) 
+                                {
+                                    diagX = x - diag;
+                                }
+                                if (diagX >= 0 && diagX < width) 
+                                {
+                                    Gem diagonalGem = gridArray[diagX, y + 1];
+                                    if (diagonalGem.GetPieceType() == PieceType.EMPTY) 
+                                    {
+                                        bool hasPieceAbove = true;
+                                        for (int aboveY = y; aboveY >= 0; aboveY--) 
+                                        {
+                                            Gem aboveGem = gridArray[diagX, aboveY];
+                                            if (aboveGem.IsMovable()) 
+                                            {
+                                                break;
+                                            }
+                                            else if (!aboveGem.IsMovable() && aboveGem.GetPieceType() == PieceType.EMPTY) 
+                                            {
+                                                hasPieceAbove = false;
+                                                break;
+                                            }
+                                        }
+                                        if (!hasPieceAbove) 
+                                        {
+                                            Destroy(diagonalGem.gameObject);
+                                            gem.MoveGem.Move(diagX, y + 1, fillTime);
+                                            gridArray[diagX, y + 1] = gem;
+                                            SpawnNewGem(x, y, PieceType.EMPTY);
+                                            movedPiece = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
