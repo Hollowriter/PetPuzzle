@@ -59,6 +59,21 @@ public class Gem : MonoBehaviour
         pieceType = _pieceType;
     }
 
+    private void OnMouseEnter()
+    {
+        
+    }
+
+    private void OnMouseDown()
+    {
+        
+    }
+
+    private void OnMouseUp() 
+    {
+        
+    }
+
     private void Awake()
     {
         moveGem = GetComponent<MoveGem>();

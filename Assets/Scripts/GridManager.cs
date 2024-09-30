@@ -164,6 +164,27 @@ public class GridManager : MonoBehaviour
         return gridArray[x, y];
     }
 
+    public bool IsAdjacent(Gem gem1, Gem gem2) 
+    {
+        return (gem1.GetX() == gem2.GetX() && (int)Mathf.Abs(gem1.GetY() - gem2.GetY()) == 1) 
+            || (gem1.GetY() == gem2.GetY() && (int)Mathf.Abs(gem1.GetX() - gem2.GetX()) == 1);
+    }
+
+    public void SwapGems(Gem gem1, Gem gem2) 
+    {
+        if (gem1.IsMovable() && gem2.IsMovable()) 
+        {
+            gridArray[gem1.GetX(), gem1.GetY()] = gem2;
+            gridArray[gem2.GetX(), gem2.GetY()] = gem1;
+
+            int gem1X = gem1.GetX();
+            int gem1Y = gem1.GetY();
+
+            gem1.MoveGem.Move(gem2.GetX(), gem2.GetY(), fillTime);
+            gem2.MoveGem.Move(gem1.GetX(), gem1.GetY(), fillTime);
+        }
+    }
+
     public int GetWidth() 
     {
         return width;
