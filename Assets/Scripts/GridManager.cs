@@ -22,8 +22,11 @@ public class GridManager : MonoBehaviour
     [SerializeField] private float fillTime;
     [SerializeField] private PiecePrefab[] gemPrefabs;  // Different gem types
     [SerializeField] private Gem[,] gridArray;
+    [SerializeField] private int matchGems;
     private Dictionary<PieceType, GameObject> piecePrefabDictionary;
     private bool inverse = false;
+    private Gem pressedGem;
+    private Gem enteredGem;
 
     private void Start()
     {
@@ -42,10 +45,17 @@ public class GridManager : MonoBehaviour
 
     public IEnumerator FillWithGems() 
     {
-        while (FillStep()) 
+        bool needsRefill = true;
+
+        while (needsRefill)
         {
-            inverse = !inverse;
             yield return new WaitForSeconds(fillTime);
+            while (FillStep())
+            {
+                inverse = !inverse;
+                yield return new WaitForSeconds(fillTime);
+            }
+            needsRefill = ClearAllValidMatches();
         }
     }
 
@@ -177,12 +187,276 @@ public class GridManager : MonoBehaviour
             gridArray[gem1.GetX(), gem1.GetY()] = gem2;
             gridArray[gem2.GetX(), gem2.GetY()] = gem1;
 
-            int gem1X = gem1.GetX();
-            int gem1Y = gem1.GetY();
+            if (GetMatch(gem1, gem2.GetX(), gem2.GetY()) != null && GetMatch(gem2, gem1.GetX(), gem1.GetY()) != null)
+            {
+                int gem1X = gem1.GetX();
+                int gem1Y = gem1.GetY();
 
-            gem1.MoveGem.Move(gem2.GetX(), gem2.GetY(), fillTime);
-            gem2.MoveGem.Move(gem1.GetX(), gem1.GetY(), fillTime);
+                gem1.MoveGem.Move(gem2.GetX(), gem2.GetY(), fillTime);
+                gem2.MoveGem.Move(gem1X, gem1Y, fillTime);
+                ClearAllValidMatches();
+                StartCoroutine(FillWithGems());
+            }
+            else 
+            {
+                gridArray[gem1.GetX(), gem1.GetY()] = gem1;
+                gridArray[gem2.GetX(), gem2.GetY()] = gem2;
+            }
         }
+    }
+
+    public void PressGem(Gem _gem) 
+    {
+        pressedGem = _gem;
+    }
+
+    public void EnterGem(Gem _gem) 
+    {
+        enteredGem = _gem;
+    }
+
+    public void ReleaseGem() 
+    {
+        if (IsAdjacent(pressedGem, enteredGem)) 
+        {
+            SwapGems(pressedGem, enteredGem);
+        }
+    }
+
+    public List<Gem> GetMatch(Gem gem, int newX, int newY) 
+    {
+        if (gem.IsColored()) 
+        {
+            ColorGem.ColorType color = gem.ColorGem.Color;
+            List<Gem> horizontalGems = new List<Gem>();
+            List<Gem> verticalGems = new List<Gem>();
+            List<Gem> matchingGems = new List<Gem>();
+            horizontalGems.Add(gem);
+
+            for (int dir = 0; dir <= 1; dir++) 
+            {
+                for (int xOffset = 1; xOffset < width; xOffset++) 
+                {
+                    int x;
+                    if (dir == 0) 
+                    {
+                        x = newX - xOffset;
+                    }
+                    else 
+                    {
+                        x = newX + xOffset;
+                    }
+
+                    if (x < 0 || x >= width) 
+                    {
+                        break;
+                    }
+
+                    if (gridArray[x, newY].IsColored() && gridArray[x, newY].ColorGem.Color == color) 
+                    {
+                        horizontalGems.Add(gridArray[x, newY]);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                if (horizontalGems.Count >= matchGems) 
+                {
+                    for (int i = 0; i < horizontalGems.Count; i++) 
+                    {
+                        matchingGems.Add(horizontalGems[i]);
+                    }
+                }
+
+                if (horizontalGems.Count > matchGems) 
+                {
+                    for (int i = 0; i < horizontalGems.Count; i++) 
+                    {
+                        for (int dire = 0; dire <= 1; dire++) 
+                        {
+                            for (int yOffset = 1; yOffset < height; yOffset++) 
+                            {
+                                int y;
+
+                                if (dire == 0) 
+                                {
+                                    y = newY - yOffset;
+                                }
+                                else 
+                                {
+                                    y = newY + yOffset;
+                                }
+
+                                if (y < 0 || y >= width)
+                                {
+                                    break;
+                                }
+                                if (gridArray[horizontalGems[i].GetX(), y].IsColored() && gridArray[horizontalGems[i].GetX(), y].ColorGem.Color == color) 
+                                {
+                                    verticalGems.Add(gridArray[horizontalGems[i].GetX(), y]);
+                                }
+                                else 
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                        if (verticalGems.Count < matchGems - 1) 
+                        {
+                            verticalGems.Clear();
+                        }
+                        else 
+                        {
+                            for (int j = 0; j < verticalGems.Count; j++) 
+                            {
+                                matchingGems.Add(verticalGems[j]);
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                if (matchingGems.Count >= matchGems) 
+                {
+                    return matchingGems;
+                }
+            }
+
+            horizontalGems.Clear();
+            verticalGems.Clear();
+            verticalGems.Add(gem);
+
+            for (int dir = 0; dir <= 1; dir++)
+            {
+                for (int yOffset = 1; yOffset < height; yOffset++)
+                {
+                    int y;
+                    if (dir == 0)
+                    {
+                        y = newY - yOffset;
+                    }
+                    else
+                    {
+                        y = newY + yOffset;
+                    }
+
+                    if (y < 0 || y >= width)
+                    {
+                        break;
+                    }
+
+                    if (gridArray[newX, y].IsColored() && gridArray[newX, y].ColorGem.Color == color)
+                    {
+                        verticalGems.Add(gridArray[newX, y]);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                if (verticalGems.Count >= matchGems)
+                {
+                    for (int i = 0; i < verticalGems.Count; i++)
+                    {
+                        matchingGems.Add(verticalGems[i]);
+                    }
+                }
+
+                if (verticalGems.Count > matchGems)
+                {
+                    for (int i = 0; i < verticalGems.Count; i++)
+                    {
+                        for (int dire = 0; dire <= 1; dire++)
+                        {
+                            for (int xOffset = 1; xOffset < width; xOffset++)
+                            {
+                                int x;
+
+                                if (dire == 0)
+                                {
+                                    x = newX - xOffset;
+                                }
+                                else
+                                {
+                                    x = newX + xOffset;
+                                }
+
+                                if (x < 0 || x >= width)
+                                {
+                                    break;
+                                }
+                                if (gridArray[x, verticalGems[i].GetY()].IsColored() && gridArray[x, verticalGems[i].GetY()].ColorGem.Color == color)
+                                {
+                                    verticalGems.Add(gridArray[x, verticalGems[i].GetY()]);
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                        if (horizontalGems.Count < matchGems - 1)
+                        {
+                            horizontalGems.Clear();
+                        }
+                        else
+                        {
+                            for (int j = 0; j < verticalGems.Count; j++)
+                            {
+                                matchingGems.Add(verticalGems[j]);
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                if (matchingGems.Count >= matchGems)
+                {
+                    return matchingGems;
+                }
+            }
+        }
+        return null;
+    }
+
+    public bool ClearGem(int x, int y) 
+    {
+        if (gridArray[x, y].IsClearable() && !gridArray[x, y].ClearableGem.IsBeingCleared) 
+        {
+            gridArray[x, y].ClearableGem.ClearGem();
+            SpawnNewGem(x, y, PieceType.EMPTY);
+            return true;
+        }
+        return false;
+    }
+
+    public bool ClearAllValidMatches() 
+    {
+        bool needsRefill = false;
+        for (int y = 0; y < height; y++) 
+        {
+            for (int x = 0; x < width; x++) 
+            {
+                if (gridArray[x, y].IsClearable()) 
+                {
+                    List<Gem> match = GetMatch(gridArray[x, y], x, y);
+                    if (match != null) 
+                    {
+                        for (int i = 0; i < match.Count; i++) 
+                        {
+                            if (ClearGem(match[i].GetX(), match[i].GetY())) 
+                            {
+                                needsRefill = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return needsRefill;
     }
 
     public int GetWidth() 

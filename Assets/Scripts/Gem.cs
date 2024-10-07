@@ -9,6 +9,7 @@ public class Gem : MonoBehaviour
     private GridManager gridManager;
     private MoveGem moveGem;
     private ColorGem colorGem;
+    private ClearableGem clearableGem;
 
     public int GetX() 
     {
@@ -42,6 +43,11 @@ public class Gem : MonoBehaviour
         get { return colorGem; }
     }
 
+    public ClearableGem ClearableGem 
+    {
+        get { return clearableGem; }
+    }
+
     public GridManager.PieceType GetPieceType() 
     {
         return pieceType;
@@ -61,23 +67,24 @@ public class Gem : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        
+        gridManager.EnterGem(this);
     }
 
     private void OnMouseDown()
     {
-        
+        gridManager.PressGem(this);
     }
 
     private void OnMouseUp() 
     {
-        
+        gridManager.ReleaseGem();
     }
 
     private void Awake()
     {
         moveGem = GetComponent<MoveGem>();
         colorGem = GetComponent<ColorGem>();
+        clearableGem = GetComponent<ClearableGem>();
         gridManager = FindObjectOfType<GridManager>();
     }
 
@@ -94,5 +101,10 @@ public class Gem : MonoBehaviour
     public bool IsColored() 
     {
         return colorGem != null;
+    }
+
+    public bool IsClearable() 
+    {
+        return clearableGem != null;
     }
 }

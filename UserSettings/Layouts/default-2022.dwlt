@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 1536
     height: 772.8
   m_ShowMode: 4
-  m_Title: Hierarchy
+  m_Title: Game
   m_RootView: {fileID: 6}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -48,7 +48,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 100}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 0
-  controlID: 86
+  controlID: 99
   draggingID: 0
 --- !u!114 &3
 MonoBehaviour:
@@ -95,8 +95,8 @@ MonoBehaviour:
     y: 0
     width: 302.4
     height: 441.6
-  m_MinSize: {x: 200, y: 200}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 201, y: 221}
+  m_MaxSize: {x: 4001, y: 4021}
   m_ActualView: {fileID: 16}
   m_Panes:
   - {fileID: 16}
@@ -224,7 +224,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 100}
   m_MaxSize: {x: 16192, y: 16192}
   vertical: 1
-  controlID: 39
+  controlID: 51
   draggingID: 0
 --- !u!114 &10
 MonoBehaviour:
@@ -304,7 +304,7 @@ MonoBehaviour:
     x: 302.4
     y: 73.6
     width: 920.4
-    height: 415
+    height: 420.6
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -317,16 +317,16 @@ MonoBehaviour:
     m_OverlaysVisible: 1
   m_ViewTransforms:
     m_KeySerializationHelper:
-    - {fileID: -2274830340302944592, guid: 44736705cf5ab41459bb61b3bbd8f385, type: 2}
+    - {fileID: 8738076262687666435, guid: a49557832205cd841bcf661416462658, type: 2}
     m_ValueSerializationHelper:
     - e00: 1
       e01: 0
       e02: 0
-      e03: 0
+      e03: -2.3999634
       e10: 0
       e11: 1
       e12: 0
-      e13: 0
+      e13: 110.40001
       e20: 0
       e21: 0
       e22: 1
@@ -336,9 +336,9 @@ MonoBehaviour:
       e32: 0
       e33: 1
   m_PreviewAnimator: {fileID: 0}
-  m_AnimatorController: {fileID: 9100000, guid: 44736705cf5ab41459bb61b3bbd8f385, type: 2}
+  m_AnimatorController: {fileID: 9100000, guid: a49557832205cd841bcf661416462658, type: 2}
   m_BreadCrumbs:
-  - m_Target: {fileID: -2274830340302944592, guid: 44736705cf5ab41459bb61b3bbd8f385, type: 2}
+  - m_Target: {fileID: 8738076262687666435, guid: a49557832205cd841bcf661416462658, type: 2}
     m_ScrollPosition: {x: 0, y: 0}
   stateMachineGraph: {fileID: 0}
   stateMachineGraphGUI: {fileID: 0}
@@ -430,7 +430,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Scripts
+    - Assets/Prefabs/Gems
     m_Globs: []
     m_OriginalText: 
     m_ImportLogFlags: 0
@@ -438,15 +438,15 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Scripts
+  - Assets/Prefabs/Gems
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\rodri\PetPuzzle
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 72}
-    m_SelectedIDs: 5e410000
-    m_LastClickedID: 16734
+    scrollPos: {x: 0, y: 116}
+    m_SelectedIDs: 42420000
+    m_LastClickedID: 16962
     m_ExpandedIDs: 000000000e410000ba41000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -615,9 +615,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 
+      m_SelectedIDs: 409b0000
       m_LastClickedID: 0
-      m_ExpandedIDs: 76d0feff3cd2feff
+      m_ExpandedIDs: 64cbfeff3cd2feffa0a70000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1036,9 +1036,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 0.84478134, y: 0.8582319, z: 0.13425751}
+    m_Target: {x: -2.6166606, y: 3.4260507, z: 0.11943388}
     speed: 2
-    m_Value: {x: 0.84478134, y: 0.8582319, z: 0.13425751}
+    m_Value: {x: -2.6166606, y: 3.4260507, z: 0.11943388}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1088,9 +1088,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 2.0027533
+    m_Target: 3.4851072
     speed: 2
-    m_Value: 2.0027533
+    m_Value: 3.4851072
   m_Ortho:
     m_Target: 1
     speed: 2
