@@ -45,18 +45,16 @@ public class GridManager : MonoBehaviour
 
     public IEnumerator FillWithGems() 
     {
-        bool needsRefill = true;
-
-        while (needsRefill)
+        bool needsRefill = false;
+        do
         {
-            yield return new WaitForSeconds(fillTime);
             while (FillStep())
             {
                 inverse = !inverse;
                 yield return new WaitForSeconds(fillTime);
             }
             needsRefill = ClearAllValidMatches();
-        }
+        } while (needsRefill);
     }
 
     public bool FillStep()
@@ -186,22 +184,21 @@ public class GridManager : MonoBehaviour
         {
             gridArray[gem1.GetX(), gem1.GetY()] = gem2;
             gridArray[gem2.GetX(), gem2.GetY()] = gem1;
+            int gem1X = gem1.GetX();
+            int gem1Y = gem1.GetY();
 
-            if (GetMatch(gem1, gem2.GetX(), gem2.GetY()) != null && GetMatch(gem2, gem1.GetX(), gem1.GetY()) != null)
-            {
-                int gem1X = gem1.GetX();
-                int gem1Y = gem1.GetY();
-
-                gem1.MoveGem.Move(gem2.GetX(), gem2.GetY(), fillTime);
-                gem2.MoveGem.Move(gem1X, gem1Y, fillTime);
+            gem1.MoveGem.Move(gem2.GetX(), gem2.GetY(), fillTime);
+            gem2.MoveGem.Move(gem1X, gem1Y, fillTime);
+            //if (GetMatch(gem1, gem2.GetX(), gem2.GetY()) != null && GetMatch(gem2, gem1.GetX(), gem1.GetY()) != null)
+            //{
                 ClearAllValidMatches();
                 StartCoroutine(FillWithGems());
-            }
-            else 
-            {
-                gridArray[gem1.GetX(), gem1.GetY()] = gem1;
-                gridArray[gem2.GetX(), gem2.GetY()] = gem2;
-            }
+            //}
+            //else 
+            //{
+                //gridArray[gem1.GetX(), gem1.GetY()] = gem1;
+                //gridArray[gem2.GetX(), gem2.GetY()] = gem2;
+            //}
         }
     }
 
