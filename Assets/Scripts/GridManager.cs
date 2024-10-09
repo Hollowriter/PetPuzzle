@@ -387,7 +387,7 @@ public class GridManager : MonoBehaviour
                                 }
                                 if (gridArray[x, verticalGems[i].GetY()].IsColored() && gridArray[x, verticalGems[i].GetY()].ColorGem.Color == color)
                                 {
-                                    verticalGems.Add(gridArray[x, verticalGems[i].GetY()]);
+                                    horizontalGems.Add(gridArray[x, verticalGems[i].GetY()]);
                                 }
                                 else
                                 {
