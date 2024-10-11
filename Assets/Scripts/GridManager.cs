@@ -9,6 +9,8 @@ public class GridManager : MonoBehaviour
         EMPTY,
         NORMAL,
         UNMOVABLE,
+        ROW_CLEAR,
+        COLUMN_CLEAR,
         COUNT
     }
     [System.Serializable]
@@ -17,8 +19,8 @@ public class GridManager : MonoBehaviour
         public PieceType Type;
         public GameObject prefab;
     }
-    [SerializeField] private int width = 8;
-    [SerializeField] private int height = 8;
+    [SerializeField] private int width;
+    [SerializeField] private int height;
     [SerializeField] private float fillTime;
     [SerializeField] private PiecePrefab[] gemPrefabs;  // Different gem types
     [SerializeField] private Gem[,] gridArray;
@@ -192,6 +194,16 @@ public class GridManager : MonoBehaviour
                 gem1.MoveGem.Move(gem2.GetX(), gem2.GetY(), fillTime);
                 gem2.MoveGem.Move(gem1X, gem1Y, fillTime);
                 ClearAllValidMatches();
+                if (gem1.GetPieceType() == PieceType.ROW_CLEAR || gem1.GetPieceType() == PieceType.COLUMN_CLEAR) 
+                {
+                    ClearGem(gem1.GetX(), gem1.GetY());
+                }
+                if (gem2.GetPieceType() == PieceType.ROW_CLEAR || gem2.GetPieceType() == PieceType.COLUMN_CLEAR)
+                {
+                    ClearGem(gem2.GetX(), gem2.GetY());
+                }
+                pressedGem = null;
+                enteredGem = null;
                 StartCoroutine(FillWithGems());
             }
             else 
@@ -217,6 +229,33 @@ public class GridManager : MonoBehaviour
         if (IsAdjacent(pressedGem, enteredGem)) 
         {
             SwapGems(pressedGem, enteredGem);
+        }
+    }
+
+    public void ClearObstacles(int x, int y) 
+    {
+        for (int adjacentX = x - 1; adjacentX <= x + 1; adjacentX++) 
+        {
+            if (adjacentX != x && adjacentX >= 0 && adjacentX < width) 
+            {
+                if (gridArray[adjacentX, y].GetPieceType() == PieceType.UNMOVABLE && gridArray[adjacentX, y].IsClearable()) 
+                {
+                    gridArray[adjacentX, y].ClearableGem.ClearGem();
+                    SpawnNewGem(adjacentX, y, PieceType.EMPTY);
+                }
+            }
+        }
+
+        for (int adjacentY = y - 1; adjacentY <= y + 1; adjacentY++)
+        {
+            if (adjacentY != y && adjacentY >= 0 && adjacentY < height)
+            {
+                if (gridArray[x, adjacentY].GetPieceType() == PieceType.UNMOVABLE && gridArray[x, adjacentY].IsClearable())
+                {
+                    gridArray[x, adjacentY].ClearableGem.ClearGem();
+                    SpawnNewGem(x, adjacentY, PieceType.EMPTY);
+                }
+            }
         }
     }
 
@@ -425,6 +464,7 @@ public class GridManager : MonoBehaviour
         {
             gridArray[x, y].ClearableGem.ClearGem();
             SpawnNewGem(x, y, PieceType.EMPTY);
+            ClearObstacles(x, y);
             return true;
         }
         return false;
@@ -442,11 +482,45 @@ public class GridManager : MonoBehaviour
                     List<Gem> match = GetMatch(gridArray[x, y], x, y);
                     if (match != null) 
                     {
+                        PieceType specialPieceType = PieceType.COUNT;
+                        Gem randomGem = match[Random.Range(0, match.Count)];
+                        int specialGemX = randomGem.GetX();
+                        int specialGemY = randomGem.GetY();
+                        if (match.Count == 4) 
+                        {
+                            if (pressedGem == null || enteredGem == null) 
+                            {
+                                specialPieceType = (PieceType)Random.Range((int)PieceType.ROW_CLEAR, (int)PieceType.COLUMN_CLEAR);
+                            }
+                            else if (pressedGem.GetY() == enteredGem.GetY()) 
+                            {
+                                specialPieceType = PieceType.ROW_CLEAR;
+                            }
+                            else
+                            {
+                                specialPieceType = PieceType.COLUMN_CLEAR;
+                            }
+                        }
                         for (int i = 0; i < match.Count; i++) 
                         {
                             if (ClearGem(match[i].GetX(), match[i].GetY())) 
                             {
                                 needsRefill = true;
+                                if (match[i] == pressedGem || match[i] == enteredGem) 
+                                {
+                                    specialGemX = match[i].GetX();
+                                    specialGemY = match[i].GetY();
+                                }
+                            }
+                        }
+                        if (specialPieceType != PieceType.COUNT) 
+                        {
+                            ClearGem(specialGemX, specialGemY);
+                            Gem newGem = SpawnNewGem(specialGemX, specialGemY, specialPieceType);
+                            if ((specialPieceType == PieceType.ROW_CLEAR || specialPieceType == PieceType.COLUMN_CLEAR) 
+                                && newGem.IsColored() && match[0].IsColored()) 
+                            {
+                                newGem.ColorGem.SetColor(match[0].ColorGem.Color);
                             }
                         }
                     }
