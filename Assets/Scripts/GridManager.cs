@@ -14,7 +14,7 @@ public class GridManager : MonoBehaviour
         COUNT
     }
     [System.Serializable]
-    public struct PiecePrefab 
+    public struct PiecePrefab
     {
         public PieceType Type;
         public GameObject prefab;
