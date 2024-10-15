@@ -515,7 +515,7 @@ public class GridManager : MonoBehaviour
                         }
                         if (specialPieceType != PieceType.COUNT) 
                         {
-                            ClearGem(specialGemX, specialGemY);
+                            Destroy(gridArray[specialGemX, specialGemY].gameObject);
                             Gem newGem = SpawnNewGem(specialGemX, specialGemY, specialPieceType);
                             if ((specialPieceType == PieceType.ROW_CLEAR || specialPieceType == PieceType.COLUMN_CLEAR) 
                                 && newGem.IsColored() && match[0].IsColored()) 
