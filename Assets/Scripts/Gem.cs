@@ -58,10 +58,11 @@ public class Gem : MonoBehaviour
         return gridManager;
     }
 
-    public void Create(int _x, int _y, GridManager.PieceType _pieceType) 
+    public void Create(int _x, int _y, GridManager _gridManager, GridManager.PieceType _pieceType) 
     {
         x = _x;
         y = _y;
+        gridManager = _gridManager;
         pieceType = _pieceType;
     }
 
@@ -85,12 +86,6 @@ public class Gem : MonoBehaviour
         moveGem = GetComponent<MoveGem>();
         colorGem = GetComponent<ColorGem>();
         clearableGem = GetComponent<ClearableGem>();
-        gridManager = FindObjectOfType<GridManager>();
-    }
-
-    private void Start()
-    {
-        gridManager = FindObjectOfType<GridManager>();
     }
 
     public bool IsMovable() 

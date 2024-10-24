@@ -47,8 +47,8 @@ public class GridManager : MonoBehaviour
 
     public IEnumerator FillWithGems() 
     {
-        bool needsRefill = false;
-        do
+        bool needsRefill = true;
+        while (needsRefill)
         {
             while (FillStep())
             {
@@ -56,7 +56,8 @@ public class GridManager : MonoBehaviour
                 yield return new WaitForSeconds(fillTime);
             }
             needsRefill = ClearAllValidMatches();
-        } while (needsRefill);
+            yield return new WaitForSeconds(fillTime);
+        }
     }
 
     public bool FillStep()
@@ -144,7 +145,7 @@ public class GridManager : MonoBehaviour
                 newGem.transform.parent = transform;
 
                 gridArray[x, 0] = newGem.GetComponent<Gem>();
-                gridArray[x, 0].Create(x, -1, PieceType.NORMAL);
+                gridArray[x, 0].Create(x, -1, this, PieceType.NORMAL);
                 gridArray[x, 0].MoveGem.Move(x, 0, fillTime);
                 gridArray[x, 0].ColorGem.SetColor((ColorGem.ColorType)Random.Range(0, gridArray[x, 0].ColorGem.NumColors));
                 movedPiece = true;
@@ -167,10 +168,10 @@ public class GridManager : MonoBehaviour
 
     public Gem SpawnNewGem(int x, int y, PieceType type) 
     {
-        GameObject newGem = (GameObject)Instantiate(piecePrefabDictionary[type], GetWorldPosition(x, y), Quaternion.identity);
+        GameObject newGem = (GameObject)Instantiate(piecePrefabDictionary[type], GetWorldPosition(x, y), Quaternion.identity, this.transform);
         newGem.transform.parent = transform;
         gridArray[x, y] = newGem.GetComponent<Gem>();
-        gridArray[x, y].Create(x, y, type);
+        gridArray[x, y].Create(x, y, this, type);
         return gridArray[x, y];
     }
 
@@ -518,7 +519,7 @@ public class GridManager : MonoBehaviour
                             Destroy(gridArray[specialGemX, specialGemY].gameObject);
                             Gem newGem = SpawnNewGem(specialGemX, specialGemY, specialPieceType);
                             if ((specialPieceType == PieceType.ROW_CLEAR || specialPieceType == PieceType.COLUMN_CLEAR) 
-                                && newGem.IsColored() && match[0].IsColored()) 
+                                 && newGem.IsColored() && match[0].IsColored()) 
                             {
                                 newGem.ColorGem.SetColor(match[0].ColorGem.Color);
                             }

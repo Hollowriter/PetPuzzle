@@ -26,13 +26,17 @@ public class MoveGem : MonoBehaviour
     {
         gem.SetX(newX);
         gem.SetY(newY);
-        Vector3 startPos = transform.position;
+        Vector3 startPos = transform.localPosition;
         Vector3 endPos = gem.GetGridManager().GetWorldPosition(newX, newY);
         for (float t = 0; t <= 1 * time; t += Time.deltaTime) 
         {
-            gem.transform.position = Vector3.Lerp(startPos, endPos, t / time);
+            gem.transform.localPosition = Vector3.Lerp(startPos, endPos, t / time);
             yield return 0;
         }
-        gem.transform.position = endPos;
+        gem.transform.localPosition = endPos;
+        if (gem.GetPieceType() == GridManager.PieceType.ROW_CLEAR || gem.GetPieceType() == GridManager.PieceType.COLUMN_CLEAR)
+        {
+            Debug.Log("sussex" + endPos + "startpos" + startPos);
+        }
     }
 }
