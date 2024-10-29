@@ -14,8 +14,8 @@ GameObject:
   - component: {fileID: 3674098815135175216}
   - component: {fileID: 6955147980855674929}
   - component: {fileID: 5557830680653556552}
-  - component: {fileID: 9180173839981733029}
   - component: {fileID: 4799386622864305796}
+  - component: {fileID: -1053276761725645532}
   m_Layer: 0
   m_Name: RowClearGem
   m_TagString: GemBlue
@@ -180,19 +180,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 4.4275064, y: 4.294112}
   m_EdgeRadius: 0
---- !u!114 &9180173839981733029
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2454557067094199502}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a562650a16b0677449938917d3f5d3f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  clearAnimation: {fileID: 7400000, guid: 5618ce93f3c923f42bd3dfa83c8d9017, type: 2}
 --- !u!95 &4799386622864305796
 Animator:
   serializedVersion: 5
@@ -214,3 +201,17 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-1053276761725645532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2454557067094199502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d3b51265213c1e4381eecaef813c89e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clearAnimation: {fileID: 7400000, guid: 5618ce93f3c923f42bd3dfa83c8d9017, type: 2}
+  isRow: 1

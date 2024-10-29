@@ -19,7 +19,7 @@ public class ClearableGem : MonoBehaviour
         gem = GetComponent<Gem>();
     }
 
-    public void ClearGem() 
+    public virtual void ClearGem() 
     {
         isBeingCleared = true;
         StartCoroutine(ClearCoroutine());
