@@ -471,6 +471,22 @@ public class GridManager : MonoBehaviour
         return false;
     }
 
+    public void ClearRow(int row) 
+    {
+        for (int x = 0; x < width; x++) 
+        {
+            ClearGem(x, row);
+        }
+    }
+
+    public void ClearColumn(int column) 
+    {
+        for (int y = 0; y < height; y++) 
+        {
+            ClearGem(column, y);
+        }
+    }
+
     public bool ClearAllValidMatches() 
     {
         bool needsRefill = false;

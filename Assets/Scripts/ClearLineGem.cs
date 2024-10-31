@@ -12,11 +12,11 @@ public class ClearLineGem : ClearableGem
         base.ClearGem();
         if (isRow) 
         {
-            
+            gem.GetGridManager().ClearRow(gem.GetY());
         }
         else 
         {
-            
+            gem.GetGridManager().ClearColumn(gem.GetX());
         }
     }
 }
