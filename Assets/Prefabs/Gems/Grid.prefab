@@ -46,7 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 8
   height: 8
-  fillTime: 0.2
+  fillTime: 1
   gemPrefabs:
   - Type: 0
     prefab: {fileID: 6299742341589749064, guid: 58c28003ed89f224588dc8c05640caf6, type: 3}
@@ -58,4 +58,6 @@ MonoBehaviour:
     prefab: {fileID: 2454557067094199502, guid: 4e2c42e6a06e0e547b6538f94c7536f5, type: 3}
   - Type: 4
     prefab: {fileID: 1613494934818596709, guid: 9945c70bf410f6a44937774b3e4ef8f5, type: 3}
+  - Type: 5
+    prefab: {fileID: 8564066257283643079, guid: 1b984f6b338134447b1bbf56b128028e, type: 3}
   matchGems: 3

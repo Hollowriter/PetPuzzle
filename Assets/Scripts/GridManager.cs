@@ -11,6 +11,7 @@ public class GridManager : MonoBehaviour
         UNMOVABLE,
         ROW_CLEAR,
         COLUMN_CLEAR,
+        RAINBOW,
         COUNT
     }
     [System.Serializable]
@@ -187,13 +188,31 @@ public class GridManager : MonoBehaviour
         {
             gridArray[gem1.GetX(), gem1.GetY()] = gem2;
             gridArray[gem2.GetX(), gem2.GetY()] = gem1;
-            if (GetMatch(gem1, gem2.GetX(), gem2.GetY()) != null || GetMatch(gem2, gem1.GetX(), gem1.GetY()) != null)
+            if (GetMatch(gem1, gem2.GetX(), gem2.GetY()) != null || GetMatch(gem2, gem1.GetX(), gem1.GetY()) != null
+                || gem1.GetPieceType() == PieceType.RAINBOW || gem2.GetPieceType() == PieceType.RAINBOW)
             {
                 int gem1X = gem1.GetX();
                 int gem1Y = gem1.GetY();
-
                 gem1.MoveGem.Move(gem2.GetX(), gem2.GetY(), fillTime);
                 gem2.MoveGem.Move(gem1X, gem1Y, fillTime);
+                if (gem1.GetPieceType() == PieceType.RAINBOW && gem1.IsClearable() && gem2.IsColored()) 
+                {
+                    ClearColorGem clearColor = gem1.GetComponent<ClearColorGem>();
+                    if (clearColor) 
+                    {
+                        clearColor.Color = gem2.ColorGem.Color;
+                    }
+                    ClearGem(gem1.GetX(), gem1.GetY());
+                }
+                if (gem2.GetPieceType() == PieceType.RAINBOW && gem2.IsClearable() && gem1.IsColored())
+                {
+                    ClearColorGem clearColor = gem2.GetComponent<ClearColorGem>();
+                    if (clearColor)
+                    {
+                        clearColor.Color = gem1.ColorGem.Color;
+                    }
+                    ClearGem(gem2.GetX(), gem2.GetY());
+                }
                 ClearAllValidMatches();
                 if (gem1.GetPieceType() == PieceType.ROW_CLEAR || gem1.GetPieceType() == PieceType.COLUMN_CLEAR) 
                 {
@@ -479,6 +498,20 @@ public class GridManager : MonoBehaviour
         }
     }
 
+    public void ClearColor(ColorGem.ColorType color) 
+    {
+        for (int x = 0; x < width; x++) 
+        {
+            for (int y = 0; y < height; y++) 
+            {
+                if (gridArray[x, y].IsColored() && gridArray[x, y].ColorGem.Color == color || color == ColorGem.ColorType.ANY) 
+                {
+                    ClearGem(x, y);
+                }
+            }
+        }
+    }
+
     public void ClearColumn(int column) 
     {
         for (int y = 0; y < height; y++) 
@@ -518,6 +551,10 @@ public class GridManager : MonoBehaviour
                                 specialPieceType = PieceType.COLUMN_CLEAR;
                             }
                         }
+                        else if (match.Count >= 5) 
+                        {
+                            specialPieceType = PieceType.RAINBOW;
+                        }
                         for (int i = 0; i < match.Count; i++) 
                         {
                             if (ClearGem(match[i].GetX(), match[i].GetY())) 
@@ -539,7 +576,11 @@ public class GridManager : MonoBehaviour
                             {
                                 newGem.ColorGem.SetColor(match[0].ColorGem.Color);
                             }
-                        }
+                            else if (specialPieceType == PieceType.RAINBOW && newGem.IsColored()) 
+                            {
+                                newGem.ColorGem.SetColor(ColorGem.ColorType.ANY);
+                            }
+                        } 
                     }
                 }
             }
