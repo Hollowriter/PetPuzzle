@@ -21,10 +21,12 @@ public class Level : MonoBehaviour
 
     public virtual void GameWin() 
     {
+        gridManager.GameOver();
     }
 
     public virtual void GameLose() 
     {
+        gridManager.GameOver();
     }
 
     public virtual void OnMove() 
@@ -33,5 +35,7 @@ public class Level : MonoBehaviour
 
     public virtual void OnGemCleared(Gem gem) 
     {
+        currentScore += gem.GetScore();
+        Debug.Log("Current Score: " + currentScore);
     }
 }

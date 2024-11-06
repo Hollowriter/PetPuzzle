@@ -17,17 +17,27 @@ public class GridManager : MonoBehaviour
     [System.Serializable]
     public struct PiecePrefab
     {
-        public PieceType Type;
+        public PieceType type;
         public GameObject prefab;
+    }
+    [System.Serializable]
+    public struct PiecePosition 
+    {
+        public PieceType type;
+        public int x;
+        public int y;
     }
     [SerializeField] private int width;
     [SerializeField] private int height;
     [SerializeField] private float fillTime;
-    [SerializeField] private PiecePrefab[] gemPrefabs;  // Different gem types
+    [SerializeField] private PiecePrefab[] gemPrefabs;
+    [SerializeField] private PiecePosition[] gemPositions;
     [SerializeField] private Gem[,] gridArray;
     [SerializeField] private int matchGems;
+    [SerializeField] private Level level;
     private Dictionary<PieceType, GameObject> piecePrefabDictionary;
     private bool inverse = false;
+    private bool gameOver = false;
     private Gem pressedGem;
     private Gem enteredGem;
 
@@ -37,9 +47,9 @@ public class GridManager : MonoBehaviour
         piecePrefabDictionary = new Dictionary<PieceType, GameObject>();
         for (int i = 0; i < gemPrefabs.Length; i++) 
         {
-            if (!piecePrefabDictionary.ContainsKey(gemPrefabs[i].Type)) 
+            if (!piecePrefabDictionary.ContainsKey(gemPrefabs[i].type)) 
             {
-                piecePrefabDictionary.Add(gemPrefabs[i].Type, gemPrefabs[i].prefab);
+                piecePrefabDictionary.Add(gemPrefabs[i].type, gemPrefabs[i].prefab);
             }
         }
         FillGrid();
@@ -158,11 +168,22 @@ public class GridManager : MonoBehaviour
 
     private void FillGrid()
     {
+        for (int i = 0; i < gemPositions.Length; i++) 
+        {
+            if (gemPositions[i].x >= 0 && gemPositions[i].x < width 
+                && gemPositions[i].y >= 0 && gemPositions[i].y < height) 
+            {
+                SpawnNewGem(gemPositions[i].x, gemPositions[i].y, gemPositions[i].type);
+            }
+        }
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                SpawnNewGem(x, y, PieceType.EMPTY);
+                if (gridArray[x, y] == null)
+                {
+                    SpawnNewGem(x, y, PieceType.EMPTY);
+                }
             }
         }
     }
@@ -176,6 +197,11 @@ public class GridManager : MonoBehaviour
         return gridArray[x, y];
     }
 
+    public Level GetLevel() 
+    {
+        return level;
+    }
+
     public bool IsAdjacent(Gem gem1, Gem gem2) 
     {
         return (gem1.GetX() == gem2.GetX() && (int)Mathf.Abs(gem1.GetY() - gem2.GetY()) == 1) 
@@ -184,6 +210,11 @@ public class GridManager : MonoBehaviour
 
     public void SwapGems(Gem gem1, Gem gem2) 
     {
+        if (gameOver) 
+        {
+            return;
+        }
+
         if (gem1.IsMovable() && gem2.IsMovable()) 
         {
             gridArray[gem1.GetX(), gem1.GetY()] = gem2;
@@ -225,6 +256,7 @@ public class GridManager : MonoBehaviour
                 pressedGem = null;
                 enteredGem = null;
                 StartCoroutine(FillWithGems());
+                level.OnMove();
             }
             else 
             {
@@ -518,6 +550,11 @@ public class GridManager : MonoBehaviour
         {
             ClearGem(column, y);
         }
+    }
+
+    public void GameOver() 
+    {
+        gameOver = true;
     }
 
     public bool ClearAllValidMatches() 

@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class Gem : MonoBehaviour
 {
+    [SerializeField] private int score;
     private int x;
     private int y;
     private GridManager.PieceType pieceType;
@@ -19,6 +20,11 @@ public class Gem : MonoBehaviour
     public int GetY() 
     {
         return y;
+    }
+
+    public int GetScore() 
+    {
+        return score;
     }
 
     public void SetX(int _x)

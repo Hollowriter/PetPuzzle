@@ -21,6 +21,7 @@ public class ClearableGem : MonoBehaviour
 
     public virtual void ClearGem() 
     {
+        gem.GetGridManager().GetLevel().OnGemCleared(gem);
         isBeingCleared = true;
         StartCoroutine(ClearCoroutine());
     }
